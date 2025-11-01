@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil - Plateforme e-commerce</title>
+</head>
+<body>
+    <h1>Bienvenue sur la plateforme e-commerce !</h1>
+
+    {% if user.is_authenticated %}
+        <p>Bonjour {{ user.username }} !</p>
+        <p>
+            <a href="{% url 'dashboard' %}">Aller au dashboard</a>
+        </p>
+        <p>
+            <a href="{% url 'logout' %}">Se déconnecter</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'login' %}">Se connecter</a>
+        </p>
+        <p>
+            <a href="{% url 'vendor_signup' %}">S'inscrire en tant que vendeur</a>
+        </p>
+        <p>
+            <a href="{% url 'customer_signup' %}">S'inscrire en tant que client</a>
+        </p>
+    {% endif %}
+</body>
+</html>
