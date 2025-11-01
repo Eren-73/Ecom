@@ -1,30 +1,33 @@
+<!-- templates/home.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Accueil - Plateforme e-commerce</title>
+    <title>Accueil - E-commerce</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        a { margin-right: 15px; text-decoration: none; color: blue; }
+        a:hover { text-decoration: underline; }
+        .navbar { margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue sur la plateforme e-commerce !</h1>
-
-    {% if user.is_authenticated %}
-        <p>Bonjour {{ user.username }} !</p>
-        <p>
-            <a href="{% url 'dashboard' %}">Aller au dashboard</a>
-        </p>
-        <p>
-            <a href="{% url 'logout' %}">Se déconnecter</a>
-        </p>
-    {% else %}
-        <p>
+    <div class="navbar">
+        {% if user.is_authenticated %}
+            <span>Bonjour {{ user.username }} !</span>
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Se déconnecter</button>
+            </form>
+            <a href="{% url 'redirect_dashboard' %}">Aller au dashboard</a>
+        {% else %}
             <a href="{% url 'login' %}">Se connecter</a>
-        </p>
-        <p>
             <a href="{% url 'vendor_signup' %}">S'inscrire en tant que vendeur</a>
-        </p>
-        <p>
             <a href="{% url 'customer_signup' %}">S'inscrire en tant que client</a>
-        </p>
-    {% endif %}
+        {% endif %}
+    </div>
+
+    <h1>Bienvenue sur la plateforme e-commerce !</h1>
+    <p>Découvrez nos fonctionnalités et connectez-vous pour accéder à votre espace personnel.</p>
 </body>
 </html>

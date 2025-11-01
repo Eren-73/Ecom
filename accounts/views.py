@@ -75,8 +75,15 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
-    logout(request)
-    return redirect('login')
+    """
+    Déconnexion via POST uniquement pour éviter le HTTP 405.
+    """
+    if request.method == 'POST':
+        logout(request)
+        return redirect('login')
+    else:
+        # Si quelqu'un tente un GET sur logout, redirige vers son dashboard
+        return redirect('redirect_dashboard')
 
 
 # -------------------
@@ -94,6 +101,9 @@ def dashboard_customer(request):
 
 @login_required
 def redirect_dashboard(request):
+    """
+    Redirige l'utilisateur vers son dashboard selon son profil.
+    """
     if hasattr(request.user, 'vendor_profile'):
         return redirect('dashboard_vendor')
     elif hasattr(request.user, 'customer_profile'):

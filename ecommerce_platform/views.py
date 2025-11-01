@@ -48,3 +48,12 @@ def client_dashboard(request):
 @login_required
 def vendeur_dashboard(request):
     return render(request, 'accounts/dashboard_vendor.html')
+
+@login_required
+def redirect_dashboard(request):
+    if hasattr(request.user, 'vendor_profile'):
+        return redirect('dashboard_vendor')
+    elif hasattr(request.user, 'customer_profile'):
+        return redirect('dashboard_customer')
+    else:
+        return redirect('home') 
