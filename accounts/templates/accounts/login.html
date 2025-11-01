@@ -1,0 +1,9 @@
+<!-- templates/accounts/login.html -->
+<h2>Connexion</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Se connecter</button>
+</form>
+<p><a href="{% url 'vendor_signup' %}">S'inscrire en tant que vendeur</a></p>
+<p><a href="{% url 'customer_signup' %}">S'inscrire en tant que client</a></p>

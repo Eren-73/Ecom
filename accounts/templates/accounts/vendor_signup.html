@@ -1,0 +1,8 @@
+<!-- accounts/templates/accounts/vendor_signup.html -->
+<h2>Inscription Vendeur</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button type="submit">S'inscrire</button>
+</form>

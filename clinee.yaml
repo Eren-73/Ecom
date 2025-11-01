@@ -1,0 +1,29 @@
+name: Django Project Assistant
+version: 1.0.0
+
+context:
+  - provider: tree
+  - provider: code
+
+models:
+  - name: Qwen 2.5 Coder 7B
+    provider: ollama
+    model: qwen2.5-coder:7b
+    roles:
+      - chat
+      - edit
+
+prompts:
+  - name: "Analyse Projet Django Existant"
+    prompt: |
+      Analyse **tout le projet Django actuellement ouvert**.
+      Ne crée pas de nouveau projet.
+      Génère un **README.md clair en Markdown** décrivant :
+        - La structure du projet
+        - Les applications (apps)
+        - Les modèles (models)
+        - Les vues et URLs
+        - Les templates
+        - Les relations entre fichiers/modules
+      Fournis uniquement du texte clair en Markdown, prêt à copier-coller.
+      N’inclus **aucun JSON** ni commande de création de projet.
