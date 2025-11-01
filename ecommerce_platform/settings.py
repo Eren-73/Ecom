@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'products',
     'orders',
 ]
+LOGIN_URL = 'login'
+
+# URL où rediriger les utilisateurs après login
+LOGIN_REDIRECT_URL = 'redirect_dashboard'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
