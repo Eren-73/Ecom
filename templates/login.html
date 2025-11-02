@@ -1,24 +1,9 @@
-<!-- accounts/templates/login.html -->
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f2f2f2; }
-        .container { max-width: 400px; margin: 100px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        button { padding: 10px 20px; background: #4CAF50; color: #fff; border: none; cursor: pointer; }
-        .error { color: red; }
-    </style>
-</head>
-<body>
 <div class="container">
     <h2>Connexion</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p class="error">{{ message }}</p>
+            <p style="color:red">{{ message }}</p>
         {% endfor %}
     {% endif %}
 
@@ -32,12 +17,4 @@
 
         <button type="submit">Se connecter</button>
     </form>
-
-    <p>Pas encore inscrit ?</p>
-    <p>
-        <a href="{% url 'vendor_signup' %}">S'inscrire comme vendeur</a> |
-        <a href="{% url 'customer_signup' %}">S'inscrire comme client</a>
-    </p>
 </div>
-</body>
-</html>

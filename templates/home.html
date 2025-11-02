@@ -19,6 +19,8 @@
                 {% csrf_token %}
                 <button type="submit">Se déconnecter</button>
             </form>
+            
+            <!-- Lien vers le dashboard -->
             <a href="{% url 'redirect_dashboard' %}">Aller au dashboard</a>
         {% else %}
             <a href="{% url 'login' %}">Se connecter</a>
