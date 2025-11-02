@@ -13,15 +13,11 @@ urlpatterns = [
     # -------------------
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-
     # -------------------
     # Dashboards
     # -------------------
     path('vendor/dashboard/', views.dashboard_vendor, name='dashboard_vendor'),
     path('customer/dashboard/', views.dashboard_customer, name='dashboard_customer'),
 
-    # -------------------
-    # Redirection vers le bon dashboard
-    # -------------------
-    path('dashboard/', views.redirect_dashboard, name='dashboard'),
+ 
 ]

@@ -1,12 +1,9 @@
-# accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-
 from .forms import VendorSignUpForm, CustomerSignUpForm, VendorProfileForm, CustomerProfileForm
-from .models import VendorProfile, CustomerProfile
 
 # -------------------
 # Signup
@@ -58,8 +55,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-
-            # Redirection automatique selon le rôle
+            # Redirection selon rôle
             if hasattr(user, 'vendor_profile'):
                 return redirect('dashboard_vendor')
             elif hasattr(user, 'customer_profile'):
@@ -75,15 +71,8 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
-    """
-    Déconnexion via POST uniquement pour éviter le HTTP 405.
-    """
-    if request.method == 'POST':
-        logout(request)
-        return redirect('login')
-    else:
-        # Si quelqu'un tente un GET sur logout, redirige vers son dashboard
-        return redirect('redirect_dashboard')
+    logout(request)
+    return redirect('home')
 
 
 # -------------------
@@ -97,16 +86,3 @@ def dashboard_vendor(request):
 @login_required
 def dashboard_customer(request):
     return render(request, 'accounts/dashboard_customer.html')
-
-
-@login_required
-def redirect_dashboard(request):
-    """
-    Redirige l'utilisateur vers son dashboard selon son profil.
-    """
-    if hasattr(request.user, 'vendor_profile'):
-        return redirect('dashboard_vendor')
-    elif hasattr(request.user, 'customer_profile'):
-        return redirect('dashboard_customer')
-    else:
-        return redirect('home')
