@@ -1,8 +1,114 @@
-<!-- accounts/templates/accounts/vendor_signup.html -->
-<h2>Inscription Vendeur</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <button type="submit">S'inscrire</button>
-</form>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Inscription Vendeur</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #eef2f7;
+        font-family: 'Segoe UI', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .signup-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        width: 90%;
+        max-width: 750px;
+        padding: 40px 60px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #0d6efd;
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
+
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    form p {
+        flex: 1 1 45%;
+        margin: 0;
+    }
+
+    input, select, textarea {
+        border-radius: 6px !important;
+        padding: 10px !important;
+        width: 100%;
+    }
+
+    .btn-submit {
+        width: 100%;
+        border-radius: 6px;
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        background-color: #0b5ed7;
+    }
+
+    .signup-footer {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 0.95rem;
+    }
+
+    .signup-footer a {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .signup-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .signup-container {
+            padding: 30px 20px;
+        }
+        form p {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h2>Inscription Vendeur</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+        <button type="submit" class="btn btn-submit">Créer mon compte</button>
+    </form>
+
+    <div class="signup-footer">
+        <p>Déjà inscrit ? <a href="{% url 'login' %}">Connectez-vous ici</a></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

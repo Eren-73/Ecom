@@ -1,2 +1,125 @@
-<h1>Bienvenue sur votre espace client, {{ user.username }} !</h1>
-<a href="{% url 'logout' %}">Se déconnecter</a>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Client</title>
+    <style>
+        /* Reset minimal */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 { font-size: 1.8rem; margin-bottom: 20px; color: #222; }
+        h2 { font-size: 1.4rem; margin-top: 30px; margin-bottom: 15px; }
+
+        a { text-decoration: none; color: #007bff; transition: 0.3s; }
+        a:hover { color: #0056b3; }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #dc3545;
+            color: white;
+            transition: 0.3s;
+        }
+        button:hover { background-color: #c82333; }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .navbar a, .navbar form button {
+            margin-right: 15px;
+        }
+        .navbar form { display: inline; }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .pending { background-color: #ffc107; }      
+        .confirmed { background-color: #17a2b8; }    
+        .processing { background-color: #007bff; }   
+        .shipped { background-color: #6c757d; }     
+        .delivered { background-color: #28a745; }   
+        .cancelled { background-color: #dc3545; }   
+
+        .btn-detail {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+        .btn-detail:hover { background-color: #0056b3; }
+
+        /* Responsive */
+        @media(max-width:768px){
+            .navbar { flex-direction: column; align-items: flex-start; }
+            .card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div>
+            <span>Bonjour {{ user.username }} !</span>
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Se déconnecter</button>
+            </form>
+        </div>
+        <div>
+            <a href="{% url 'home' %}">Accueil</a>
+            <a href="{% url 'cart_detail' %}">Voir mon panier</a>
+        </div>
+    </div>
+
+    <h1>Mon Dashboard</h1>
+
+    <h2>Mes commandes</h2>
+    {% if orders %}
+        {% for order in orders %}
+            <div class="card">
+                <strong>Commande #{{ order.order_number }}</strong><br>
+                Statut : 
+                <span class="badge {% if order.status == 'pending' %}pending{% elif order.status == 'confirmed' %}confirmed{% elif order.status == 'processing' %}processing{% elif order.status == 'shipped' %}shipped{% elif order.status == 'delivered' %}delivered{% elif order.status == 'cancelled' %}cancelled{% endif %}">
+                    {{ order.get_status_display }}
+                </span><br>
+                Total : {{ order.total_amount }} €<br>
+                <a class="btn-detail" href="{% url 'order_detail_customer' order.pk %}">Voir détails</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Vous n'avez encore passé aucune commande.</p>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement</title>
+</head>
+<body>
+    <h1>Paiement de la commande #{{ order.order_number }}</h1>
+    <p>Total : {{ order.total_amount }} €</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Payer maintenant</button>
+    </form>
+</body>
+</html>

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-# This line imports the built-in User model from Django's authentication system. It allows us to use the User model in our models for things like associating data with a specific user.
 from django.urls import reverse
 
 class VendorProfile(models.Model):
@@ -11,6 +10,7 @@ class VendorProfile(models.Model):
     phone = models.CharField(max_length=20, verbose_name="Téléphone")
     address = models.TextField(verbose_name="Adresse")
     city = models.CharField(max_length=100, verbose_name="Ville")
+    image = models.ImageField(upload_to='vendors/', blank=True, null=True)  
     is_verified = models.BooleanField(default=False, verbose_name="Vérifié")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
