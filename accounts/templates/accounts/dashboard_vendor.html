@@ -1,3 +1,314 @@
+<<<<<<< HEAD
 <h1>Tableau de bord - Vendeur</h1>
 <p>Bienvenue {{ request.user.username }} 👋</p>
 <a href="/logout/">Se déconnecter</a>
+=======
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Vendeur</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ===== Reset & Global ===== */
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        a { text-decoration: none; color: #007bff; transition: 0.3s; }
+        a:hover { color: #0056b3; }
+
+        /* ===== Header ===== */
+        header {
+            background: linear-gradient(90deg,#007bff,#0056b3);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        header h1 { margin: 0; font-size: 1.6rem; }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-header {
+            background: white;
+            color: #007bff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-header:hover { background: #e9ecef; }
+
+        /* ===== Main ===== */
+        main { padding: 30px 40px; max-width: 1200px; margin: auto; }
+        h2 { margin-bottom: 20px; color: #007bff; }
+
+        /* ===== Sections ===== */
+        .section { margin-bottom: 50px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+
+        /* ===== Tables ===== */
+        table {
+            width: 100%; border-collapse: collapse;
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        th, td { padding: 12px 15px; text-align: left; }
+        th { background: #007bff; color: white; font-weight: 600; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        tr:hover { background: #e9f1ff; transition: 0.2s; }
+
+        /* ===== Buttons ===== */
+        .btn-edit, .btn-delete, .btn-csv, .btn-add {
+            padding: 6px 12px; border-radius: 6px;
+            color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+            text-decoration: none; display: inline-block;
+        }
+        .btn-edit { background: #28a745; }
+        .btn-edit:hover { background: #218838; }
+        .btn-delete { background: #dc3545; }
+        .btn-delete:hover { background: #c82333; }
+        .btn-csv { background: #17a2b8; }
+        .btn-csv:hover { background: #117a8b; }
+        .btn-add { background: #007bff; }
+        .btn-add:hover { background: #0056b3; }
+
+        /* ===== Badges ===== */
+        .badge {
+            padding: 5px 10px; border-radius: 12px; color: white;
+            font-size: 0.85em; font-weight: bold;
+        }
+        .badge-pending { background: #ffc107; }
+        .badge-processing { background: #17a2b8; }
+        .badge-shipped { background: #007bff; }
+        .badge-delivered { background: #28a745; }
+
+        /* ===== Inputs ===== */
+        #searchProduct, #statusFilter {
+            padding: 8px 10px; margin-bottom: 15px; border-radius: 6px;
+            border: 1px solid #ccc; width: 100%; max-width: 300px;
+        }
+
+        /* ===== Charts ===== */
+        .charts-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; }
+        .chart-card { flex: 1; min-width: 350px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .chart-card h3 { text-align: center; color: #007bff; margin-bottom: 15px; }
+
+        /* ===== Responsive ===== */
+        @media(max-width: 768px){
+            header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .charts-container { flex-direction: column; }
+            .btn-add, .btn-csv { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Espace vendeur : {{ user.username }}</h1>
+    <div class="header-buttons">
+        <!-- Nouveau bouton Accueil -->
+        <a href="{% url 'home' %}" class="btn-header">🏠 Accueil</a>
+
+        <!-- Bouton Déconnexion -->
+        <form action="{% url 'logout' %}" method="post" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="btn-header">🚪 Se déconnecter</button>
+        </form>
+    </div>
+</header>
+
+<main>
+    <!-- Statistiques -->
+    <div class="section">
+        <h2>📈 Statistiques de vente</h2>
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>Ventes par mois (€)</h3>
+                <canvas id="ventesMois"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Produits les plus vendus</h3>
+                <canvas id="topProduits"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gestion produits -->
+    <div class="section">
+        <h2>🛍️ Gestion des produits</h2>
+        <div class="mb-3 d-flex flex-wrap gap-2">
+            <a href="{% url 'product_create' %}" class="btn-add">➕ Ajouter un produit</a>
+            <a href="{% url 'category_create' %}" class="btn-add" style="background:#6c757d;">➕ Ajouter une catégorie</a>
+            <button id="downloadCsv" class="btn-csv">📥 Télécharger CSV</button>
+        </div>
+
+        <input type="text" id="searchProduct" placeholder="Rechercher un produit...">
+
+        {% if user.vendor_profile.products.all %}
+        <div class="card">
+            <table id="productsTable">
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                </tr>
+                {% for product in user.vendor_profile.products.all %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }} €</td>
+                    <td>{% if product.category %}{{ product.category.name }}{% else %}-{% endif %}</td>
+                    <td>
+                        <a href="{% url 'product_edit' product.pk %}" class="btn-edit">Modifier</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="btn-delete"
+                           onclick="return confirm('Voulez-vous vraiment supprimer ce produit ?');">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <p>Aucun produit pour le moment.</p>
+        {% endif %}
+    </div>
+
+    <!-- Commandes -->
+    <div class="section">
+        <h2>📦 Commandes reçues</h2>
+        <select id="statusFilter">
+            <option value="all">Tous</option>
+            <option value="pending">En attente</option>
+            <option value="processing">En traitement</option>
+            <option value="shipped">Expédiée</option>
+            <option value="delivered">Livrée</option>
+        </select>
+
+        {% if order_items %}
+        <div class="card">
+            <table id="ordersTable">
+                <tr>
+                    <th>Commande</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Sous-total</th>
+                    <th>Client</th>
+                    <th>Statut</th>
+                    <th>Changer le statut</th>
+                </tr>
+                {% for item in order_items %}
+                <tr>
+                    <td>#{{ item.order.order_number }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }} €</td>
+                    <td>{{ item.total_price }} €</td>
+                    <td>{{ item.order.customer.username }}</td>
+                    <td>
+                        <span class="badge badge-{{ item.order.status }}">
+                            {{ item.order.status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        <select onchange="updateOrderStatus('{{ item.order.pk }}', this.value)">
+                            <option value="pending" {% if item.order.status == 'pending' %}selected{% endif %}>En attente</option>
+                            <option value="processing" {% if item.order.status == 'processing' %}selected{% endif %}>En traitement</option>
+                            <option value="shipped" {% if item.order.status == 'shipped' %}selected{% endif %}>Expédiée</option>
+                            <option value="delivered" {% if item.order.status == 'delivered' %}selected{% endif %}>Livrée</option>
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <p>Aucune commande reçue pour le moment.</p>
+        {% endif %}
+    </div>
+</main>
+
+<script>
+    // Graphique ventes
+    const ctx1 = document.getElementById('ventesMois').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: {{ mois|safe }},
+            datasets: [{
+                label: 'Montant total (€)',
+                data: {{ totaux|safe }},
+                borderColor: 'rgba(0, 123, 255, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Graphique produits
+    const ctx2 = document.getElementById('topProduits').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ noms_produits|safe }},
+            datasets: [{
+                label: 'Quantité vendue',
+                data: {{ qte_vendue|safe }},
+                backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Mise à jour statut
+    function updateOrderStatus(orderId, newStatus) {
+        fetch(`/accounts/order/${orderId}/update/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${newStatus}`
+        }).then(res => { if(res.ok) location.reload(); else alert("Erreur"); }).catch(err => console.error(err));
+    }
+
+    // Filtrer commandes
+    document.getElementById('statusFilter').addEventListener('change', function(){
+        const status = this.value;
+        document.querySelectorAll('#ordersTable tr').forEach((row,i)=>{
+            if(i===0) return;
+            const rowStatus = row.querySelector('.badge').className.split(' ')[1].replace('badge-','');
+            row.style.display = (status==='all' || rowStatus===status)? '' : 'none';
+        });
+    });
+
+    // Recherche produits
+    document.getElementById('searchProduct').addEventListener('keyup', function(){
+        const query = this.value.toLowerCase();
+        document.querySelectorAll('#productsTable tr').forEach((row,i)=>{
+            if(i===0) return;
+            row.style.display = row.cells[0].textContent.toLowerCase().includes(query)? '' : 'none';
+        });
+    });
+
+    // Télécharger CSV
+    document.getElementById('downloadCsv').addEventListener('click', function(){
+        window.location.href = "{% url 'vendor_sales_csv' %}";
+    });
+</script>
+</body>
+</html>
+>>>>>>> feature/produits

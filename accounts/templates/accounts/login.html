@@ -1,4 +1,5 @@
 <!-- templates/accounts/login.html -->
+<<<<<<< HEAD
 <h2>Connexion</h2>
 <form method="POST">
     {% csrf_token %}
@@ -7,3 +8,35 @@
 </form>
 <p><a href="{% url 'vendor_signup' %}">S'inscrire en tant que vendeur</a></p>
 <p><a href="{% url 'customer_signup' %}">S'inscrire en tant que client</a></p>
+=======
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Connexion</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+    <div class="card shadow-lg p-5" style="max-width: 450px; width: 100%;">
+        <h2 class="text-center text-primary mb-4">Connexion</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Se connecter</button>
+        </form>
+        <div class="text-center">
+            <p class="mb-2">Pas encore inscrit ?</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{% url 'vendor_signup' %}" class="btn btn-outline-primary">Vendeur</a>
+                <a href="{% url 'customer_signup' %}" class="btn btn-outline-secondary">Client</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+>>>>>>> feature/produits
