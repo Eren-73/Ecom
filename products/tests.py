@@ -1,8 +1,4 @@
 from django.test import TestCase
-<<<<<<< HEAD
-
-# Create your tests here.
-=======
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -106,4 +102,3 @@ class ProductFormTests(TestCase):
         self.assertEqual(self.product.name, 'Produit1 modifié')
         self.assertEqual(self.product.additional_images.count(), 2)
         self.assertTrue(self.product.image)
->>>>>>> feature/produits

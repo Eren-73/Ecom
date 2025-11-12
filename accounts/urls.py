@@ -1,10 +1,7 @@
 from django.urls import path
 from . import views
-<<<<<<< HEAD
-=======
 from django.conf import settings
 from django.conf.urls.static import static
->>>>>>> feature/produits
 
 urlpatterns = [
     # -------------------
@@ -24,10 +21,6 @@ urlpatterns = [
     path('vendor/dashboard/', views.dashboard_vendor, name='dashboard_vendor'),
     path('customer/dashboard/', views.dashboard_customer, name='dashboard_customer'),
 
-<<<<<<< HEAD
- 
-]
-=======
     path('vendor/order/<int:order_item_id>/status/', views.change_order_status, name='change_order_status'),
     path('order/<int:order_id>/update/', views.update_order_status, name='update_order_status'),
 
@@ -45,4 +38,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> feature/produits

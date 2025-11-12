@@ -1,27 +1,18 @@
-<<<<<<< HEAD
-from django.shortcuts import render, redirect
-=======
 import csv
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
->>>>>>> feature/produits
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-<<<<<<< HEAD
-from .forms import VendorSignUpForm, CustomerSignUpForm, VendorProfileForm, CustomerProfileForm
-=======
 
 from accounts.models import VendorProfile
 from products.models import Product
 from .forms import VendorSignUpForm, CustomerSignUpForm, VendorProfileForm, CustomerProfileForm
-from orders.models import Cart, OrderItem,Order
+from orders.models import Cart, OrderItem, Order
 from django.views.decorators.http import require_POST
 from django.db.models import Sum, Count
-
->>>>>>> feature/produits
 
 # -------------------
 # Signup
@@ -98,9 +89,6 @@ def logout_view(request):
 # -------------------
 @login_required
 def dashboard_vendor(request):
-<<<<<<< HEAD
-    return render(request, 'accounts/dashboard_vendor.html')
-=======
     # Récupérer les produits du vendeur
     products = request.user.vendor_profile.products.all()
 
@@ -136,14 +124,7 @@ def dashboard_vendor(request):
     }
 
     return render(request, 'accounts/dashboard_vendor.html', context)
->>>>>>> feature/produits
 
-
-@login_required
-def dashboard_customer(request):
-    return render(request, 'accounts/dashboard_customer.html')
-<<<<<<< HEAD
-=======
 
 @login_required
 def change_order_status(request, order_item_id):
@@ -252,4 +233,3 @@ def boutique_vendeur(request, vendor_id):
         'products': products,
         'query': query
     })
->>>>>>> feature/produits

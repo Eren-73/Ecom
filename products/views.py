@@ -1,17 +1,8 @@
-<<<<<<< HEAD
-from django.shortcuts import render
-
-# Create your views here.
-=======
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category,ProductImage
-from .forms import ProductForm, ProductImageFormSet
-from .forms import ProductForm
-
+from .models import Product, Category, ProductImage
+from .forms import ProductForm, ProductImageFormSet, CategoryForm
 from django.contrib import messages
-from .models import Category
-from .forms import CategoryForm
 
 @login_required
 def product_list(request):
@@ -125,4 +116,3 @@ def category_delete(request, pk):
         messages.success(request, "Catégorie supprimée avec succès !")
         return redirect('category_list')
     return render(request, 'category/category_confirm_delete.html', {'category': category})
->>>>>>> feature/produits

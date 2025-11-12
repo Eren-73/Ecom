@@ -27,11 +27,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Prix")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Catégorie")
     tags = models.CharField(max_length=500, blank=True, verbose_name="Étiquettes (séparées par des virgules)")
-<<<<<<< HEAD
-    image = models.ImageField(upload_to='products/', verbose_name="Image principale")
-=======
-    image = models.ImageField(upload_to='products/', blank=True, null=True,verbose_name="Image principale")
->>>>>>> feature/produits
+    image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name="Image principale")
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name="Quantité en stock")
     is_active = models.BooleanField(default=True, verbose_name="Actif")
     created_at = models.DateTimeField(auto_now_add=True)

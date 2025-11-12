@@ -18,42 +18,25 @@ from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
 from . import views 
-<<<<<<< HEAD
-=======
 from django.conf import settings
 from django.conf.urls.static import static
->>>>>>> feature/produits
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'), 
     path('accounts/', include('accounts.urls')),
-<<<<<<< HEAD
-=======
     path('products/', include('products.urls')),
     path('orders/', include('orders.urls')),
->>>>>>> feature/produits
-
 
     # Redirection automatique vers le dashboard
     path('dashboard/', views.redirect_dashboard, name='redirect_dashboard'),
 
-
-    
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
-   
-
 
     # Redirections selon rôle
     path('client/', views.client_dashboard, name='client_dashboard'),
     path('vendeur/', views.vendeur_dashboard, name='vendeur_dashboard'),
-<<<<<<< HEAD
 ]
-=======
 
-   
-
-]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> feature/produits

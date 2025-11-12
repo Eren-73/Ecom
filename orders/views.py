@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-from django.shortcuts import render
-
-# Create your views here.
-=======
 # orders/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -12,7 +7,6 @@ from .models import Cart, CartItem, Order, OrderItem
 from accounts.models import CustomerProfile, VendorProfile
 from django.conf import settings
 from django.core.mail import send_mail
-from django.conf import settings
 
 
 @login_required
@@ -185,4 +179,3 @@ def boutique_vendeur(request, vendor_id):
         'products': products,
         'query': query,
     })
->>>>>>> feature/produits

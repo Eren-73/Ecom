@@ -137,3 +137,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Stripe Configuration (for payment processing)
+# Replace these with your actual Stripe keys from https://dashboard.stripe.com/apikeys
+STRIPE_PUBLIC_KEY = 'pk_test_your_stripe_public_key_here'
+STRIPE_SECRET_KEY = 'sk_test_your_stripe_secret_key_here'
