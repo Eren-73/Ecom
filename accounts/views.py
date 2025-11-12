@@ -89,6 +89,11 @@ def logout_view(request):
 # -------------------
 @login_required
 def dashboard_vendor(request):
+    # Check if user has a vendor profile
+    if not hasattr(request.user, 'vendor_profile'):
+        messages.error(request, "Vous n'avez pas accès au tableau de bord vendeur. Créez d'abord un profil vendeur.")
+        return redirect('home')
+    
     # Récupérer les produits du vendeur
     products = request.user.vendor_profile.products.all()
 

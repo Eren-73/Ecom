@@ -2,59 +2,164 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Supprimer le produit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚠️ Supprimer le Produit</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
     body {
-        background-color: #f8f9fa;
         font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
     }
-    .container {
-        max-width: 500px;
-        margin: 80px auto;
-        padding: 30px;
+
+    .confirm-container {
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 0 auto;
         text-align: center;
     }
-    h1 {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
+
+    .warning-icon {
+        font-size: 5rem;
         color: #dc3545;
+        margin-bottom: 25px;
+        animation: pulse 2s infinite;
     }
-    .btn-delete {
-        background-color: #dc3545;
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .confirm-header h1 {
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .product-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 25px 0;
+        text-align: left;
+    }
+
+    .product-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .product-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-danger-confirm {
+        background: #dc3545;
         color: white;
-        padding: 10px 20px;
-        border-radius: 6px;
-        margin-right: 10px;
         border: none;
-        font-weight: bold;
-        transition: 0.3s;
+        padding: 14px 40px;
+        border-radius: 10px;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 10px;
     }
-    .btn-delete:hover { background-color: #c82333; }
+
+    .btn-danger-confirm:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(220, 53, 69, 0.4);
+    }
+
     .btn-cancel {
-        background-color: #6c757d;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 10px 20px;
-        border-radius: 6px;
+        padding: 14px 40px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
         text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
     }
-    .btn-cancel:hover { background-color: #5a6268; }
 </style>
 </head>
 <body>
-<div class="container">
-    <h1>Supprimer le produit "{{ product.name }}" ?</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn-delete">Oui, supprimer</button>
-        <a href="{{ product.get_absolute_url }}" class="btn-cancel">Annuler</a>
-    </form>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="container">
+        <div class="confirm-container">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <div class="confirm-header">
+                <h1>Supprimer le Produit ?</h1>
+                <p class="text-muted">Cette action est irréversible</p>
+            </div>
+
+            <div class="product-info">
+                {% if object.image %}
+                    <img src="{{ object.image.url }}" class="img-fluid rounded mb-3" alt="{{ object.name }}" style="max-height: 200px;">
+                {% endif %}
+                
+                <div class="product-name">
+                    <i class="fas fa-box"></i> {{ object.name }}
+                </div>
+                
+                <div class="product-details">
+                    <div class="detail-item">
+                        <i class="fas fa-euro-sign text-primary"></i>
+                        <strong>Prix:</strong> {{ object.price }}€
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-warehouse text-success"></i>
+                        <strong>Stock:</strong> {{ object.stock }}
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-tag text-info"></i>
+                        <strong>Catégorie:</strong> {{ object.category.name }}
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar text-secondary"></i>
+                        <strong>Créé le:</strong> {{ object.created_at|date:"d/m/Y" }}
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-danger mb-3">
+                <i class="fas fa-exclamation-circle"></i>
+                Êtes-vous sûr de vouloir supprimer ce produit ?
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger-confirm">
+                    <i class="fas fa-trash"></i> Oui, supprimer définitivement
+                </button>
+                <a href="{% url 'product_list' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Non, annuler
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

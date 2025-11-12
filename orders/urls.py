@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('cart/', views.cart_detail, name='cart_detail'),
+    path('cart/', views.cart_detail, name='cart'),  # Changed name to 'cart' for consistency
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
@@ -14,7 +14,6 @@ urlpatterns = [
     path('payment/<int:order_id>/', views.payment, name='payment'),
     path('success/', views.payment_success, name='payment_success'),
     path('history/', views.order_history, name='order_history'),
-    path('vendor/<int:vendor_id>/boutique/', views.boutique_vendeur, name='boutique_vendeur'),
 
 ]
 

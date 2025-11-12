@@ -1,0 +1,159 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil - E-commerce</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Navbar */
+        .navbar-brand { font-weight: bold; font-size: 1.6rem; }
+        .nav-link.btn { padding: 0.5rem 1rem; margin-right: 0.5rem; }
+        .dropdown-toggle img { border-radius: 50%; margin-right: 0.5rem; }
+
+        /* Cards */
+        .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .card-img-top { height: 180px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .truncate-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Sections */
+        .section-title { margin-top: 40px; margin-bottom: 20px; font-weight: 600; color: #343a40; }
+
+        /* Vendor cards */
+        .vendor-card h5 { margin-bottom: 0.3rem; }
+        .vendor-card h6 { font-size: 0.85rem; color: #6c757d; }
+
+        /* Product cards */
+        .product-card h6 { margin-bottom: 0.3rem; font-weight: 500; }
+        .vendor-name { font-size: 0.8rem; color: #6c757d; }
+        .product-price { font-weight: bold; color: #007bff; margin-bottom: 0.5rem; }
+
+        /* Buttons spacing */
+        .btn-group-sm a { margin-bottom: 0.3rem; display: inline-block; }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">Ma Boutique</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false" 
+                       style="padding:0.4rem 0.8rem; border:1px solid #dee2e6; border-radius:10px; background:#f8f9fa;">
+                        <!-- Cercle avec première lettre du nom -->
+                        <div class="me-2 rounded-circle d-flex justify-content-center align-items-center"
+                             style="width:35px; height:35px; background-color:#007bff; color:white; font-weight:bold;">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <span>{{ user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3 mt-2" aria-labelledby="userDropdown" style="min-width: 200px;">
+                        {% if user.customer_profile %}
+                        <li><a class="dropdown-item" href="{% url 'dashboard_customer' %}">Dashboard client</a></li>
+                        {% endif %}
+                        {% if user.vendor_profile %}
+                        <li><a class="dropdown-item" href="{% url 'dashboard_vendor' %}">Gérer mes produits</a></li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{% url 'logout' %}" method="post" class="m-0 p-0">
+                                {% csrf_token %}
+                                <button class="dropdown-item text-danger">Se déconnecter</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                    <li class="nav-item me-2"><a class="btn btn-outline-primary" href="{% url 'login' %}">Se connecter</a></li>
+                    <li class="nav-item me-2"><a class="btn btn-outline-success" href="{% url 'vendor_signup' %}">Devenir vendeur</a></li>
+                    <li class="nav-item"><a class="btn btn-outline-secondary" href="{% url 'customer_signup' %}">S'inscrire</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+
+    <!-- Boutiques -->
+    {% if user.is_authenticated and user.customer_profile %}
+    <h2 class="section-title">Nos boutiques</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for vendor in boutiques %}
+        <div class="col">
+            <div class="card h-100 vendor-card">
+                {% if vendor.image %}
+                    <img src="{{ vendor.image.url }}" class="card-img-top" alt="{{ vendor.business_name }}">
+                {% else %}
+                    <img src="{% static 'images/vendor_placeholder.png' %}" class="card-img-top" alt="Image boutique">
+                {% endif %}
+                <div class="card-body">
+                    <h5>{{ vendor.business_name }}</h5>
+                    <h6>{{ vendor.city }}</h6>
+                    <p class="truncate-text">{{ vendor.description }}</p>
+                    <a href="{% url 'boutique_vendeur' vendor.id %}" class="btn btn-primary btn-sm mt-2">Visiter la boutique</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Aucune boutique disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Produits mis en avant -->
+    <h2 class="section-title">Produits mis en avant</h2>
+    <div class="row row-cols-1 row-cols-md-5 g-3">
+        {% for bp in boutiques_products %}
+            {% for product in bp.products %}
+            <div class="col">
+                <div class="card h-100 product-card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{% static 'images/product_placeholder.png' %}" class="card-img-top" alt="Image produit">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h6>{{ product.name }}</h6>
+                        <span class="vendor-name mb-1">Boutique : {{ bp.vendor.business_name }}</span>
+                        {% if product.category %}
+                            <span class="text-secondary mb-2">{{ product.category.name }}</span>
+                        {% endif %}
+                        <span class="product-price">{{ product.price }} €</span>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary btn-sm mt-auto">Voir le produit</a>
+                        {% if user.is_authenticated and user.customer_profile %}
+                            <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-success btn-sm mt-1">Ajouter au panier</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% empty %}
+            <p>Aucun produit disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

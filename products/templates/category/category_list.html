@@ -2,94 +2,129 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Liste des catégories</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📂 Gestion des Catégories</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
     body {
-        background-color: #f8f9fa;
         font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
     }
-    .container {
-        max-width: 700px;
-        margin: 50px auto;
-    }
-    h1 {
-        text-align: center;
+
+    .page-header {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
         margin-bottom: 30px;
-        color: #007bff;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-    .btn-add {
-        display: block;
+
+    .page-header h1 {
+        color: #667eea;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .category-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
         margin-bottom: 20px;
-        background-color: #28a745;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 6px;
-        text-align: center;
-        text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
     }
-    .btn-add:hover { background-color: #218838; }
 
-    .btn-dashboard {
-        display: block;
-        margin-bottom: 30px;
-        background-color: #0d6efd;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 6px;
-        text-align: center;
-        text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-    .btn-dashboard:hover { background-color: #0b5ed7; }
 
-    .list-group-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 6px;
+    .category-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
     }
-    .list-group-item a {
-        margin-left: 10px;
+
+    .btn-add {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .btn-edit {
+        background: #17a2b8;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
         text-decoration: none;
-        padding: 4px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
     }
-    .btn-edit { background-color: #007bff; color: white; }
-    .btn-edit:hover { background-color: #0056b3; }
-    .btn-delete { background-color: #dc3545; color: white; }
-    .btn-delete:hover { background-color: #c82333; }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
 </style>
 </head>
 <body>
-<div class="container">
-    <h1>Liste des catégories</h1>
+    <div class="container">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h1><i class="fas fa-folder-open"></i> Mes Catégories</h1>
+                <div>
+                    <a href="{% url 'dashboard_vendor' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left"></i> Dashboard
+                    </a>
+                    <a href="{% url 'category_create' %}" class="btn-add">
+                        <i class="fas fa-plus"></i> Nouvelle catégorie
+                    </a>
+                </div>
+            </div>
+        </div>
 
-    <!-- Bouton Retour au Dashboard -->
-    <a href="{% url 'dashboard_vendor' %}" class="btn-dashboard">⬅ Retour au Dashboard</a>
+        {% if categories %}
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="category-card">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" class="img-fluid rounded mb-3" alt="{{ category.name }}" style="height: 150px; width: 100%; object-fit: cover;">
+                        {% endif %}
+                        <h3 class="category-name">{{ category.name }}</h3>
+                        <p class="text-muted">{{ category.description|truncatewords:15 }}</p>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{% url 'category_update' category.id %}" class="btn-edit flex-fill text-center">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{% url 'category_delete' category.id %}" class="btn-delete flex-fill text-center">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="category-card text-center py-5">
+                <i class="fas fa-folder-open fa-5x text-muted mb-3"></i>
+                <h3>Aucune catégorie</h3>
+                <p class="text-muted mb-4">Créez votre première catégorie pour organiser vos produits</p>
+                <a href="{% url 'category_create' %}" class="btn-add">
+                    <i class="fas fa-plus"></i> Créer une catégorie
+                </a>
+            </div>
+        {% endif %}
+    </div>
 
-    <!-- Bouton Ajouter une catégorie -->
-    <a href="{% url 'category_create' %}" class="btn-add">➕ Ajouter une catégorie</a>
-
-    <!-- Liste des catégories -->
-    <ul class="list-group">
-    {% for category in categories %}
-        <li class="list-group-item">
-            {{ category.name }}
-            <span>
-                <a href="{% url 'category_edit' category.pk %}" class="btn-edit">Modifier</a>
-                <a href="{% url 'category_delete' category.pk %}" class="btn-delete">Supprimer</a>
-            </span>
-        </li>
-    {% empty %}
-        <li class="list-group-item text-center">Aucune catégorie.</li>
-    {% endfor %}
-    </ul>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

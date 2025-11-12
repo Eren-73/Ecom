@@ -1,7 +1,12 @@
 # orders/views.py
+# d:\Projets\Ecom\orders\views.py
+# Ce fichier gère toutes les vues liées aux commandes et au panier
+# WHY: Centraliser la logique métier pour le panier, checkout et historique des commandes
+# RELEVANT FILES: orders/models.py, orders/templates/orders/*, products/models.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-import stripe
+from django.contrib import messages
 from products.models import Product
 from .models import Cart, CartItem, Order, OrderItem
 from accounts.models import CustomerProfile, VendorProfile
@@ -13,11 +18,19 @@ from django.core.mail import send_mail
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     cart, _ = Cart.objects.get_or_create(user=request.user)
+    
+    # Récupérer la quantité depuis le formulaire POST
+    quantity = int(request.POST.get('quantity', 1))
+    
     item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
-        item.quantity += 1
-        item.save()
-    return redirect('cart_detail')
+        # Si l'item existe déjà, on ajoute la quantité
+        item.quantity += quantity
+    else:
+        # Si c'est un nouvel item, on définit la quantité
+        item.quantity = quantity
+    item.save()
+    return redirect('cart')
 
 @login_required
 def cart_detail(request):
@@ -28,23 +41,43 @@ def cart_detail(request):
 def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, pk=item_id)
     item.delete()
-    return redirect('cart_detail')
+    return redirect('cart')
 
 @login_required
 def checkout(request):
+    """
+    Gère le processus de checkout (simulation sans paiement réel)
+    Crée une commande directement après validation du formulaire
+    """
     cart = get_object_or_404(Cart, user=request.user)
+    
+    # Si le panier est vide, rediriger vers le panier
     if cart.items.count() == 0:
-        return redirect('cart_detail')
+        messages.warning(request, 'Votre panier est vide.')
+        return redirect('cart')
 
     if request.method == 'POST':
-        # Création de la commande
+        # Récupérer les informations de livraison
+        shipping_address = request.POST.get('shipping_address', '').strip()
+        shipping_city = request.POST.get('shipping_city', '').strip()
+        shipping_phone = request.POST.get('shipping_phone', '').strip()
+        
+        # Validation simple
+        if not all([shipping_address, shipping_city, shipping_phone]):
+            messages.error(request, 'Veuillez remplir tous les champs obligatoires.')
+            return render(request, 'orders/checkout.html', {'cart': cart})
+        
+        # Création de la commande (simulation de paiement réussi)
         order = Order.objects.create(
             customer=request.user,
             total_amount=cart.total_amount,
-            shipping_address=request.POST['shipping_address'],
-            shipping_city=request.POST['shipping_city'],
-            shipping_phone=request.POST['shipping_phone']
+            shipping_address=shipping_address,
+            shipping_city=shipping_city,
+            shipping_phone=shipping_phone,
+            status='confirmed'  # Statut confirmé directement (simulation)
         )
+        
+        # Créer les items de commande
         for item in cart.items.all():
             OrderItem.objects.create(
                 order=order,
@@ -52,9 +85,18 @@ def checkout(request):
                 quantity=item.quantity,
                 price=item.product.price
             )
+        
         # Vider le panier
         cart.items.all().delete()
-        return redirect('order_detail', pk=order.pk)
+        
+        # Stocker l'ID de la commande dans la session pour l'afficher sur la page de succès
+        request.session['last_order_id'] = order.pk
+        
+        # Message de succès
+        messages.success(request, f'Commande #{order.pk} créée avec succès ! 🎉')
+        
+        # Rediriger vers la page de succès
+        return redirect('payment_success')
 
     return render(request, 'orders/checkout.html', {'cart': cart})
 
@@ -67,48 +109,6 @@ def order_list(request):
 def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk)
     return render(request, 'orders/order_detail.html', {'order': order})
-
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
-@login_required
-def checkout(request):
-    cart = Cart.objects.filter(user=request.user).first()
-    if not cart or cart.items.count() == 0:
-        return redirect('home')
-
-    # Création d'une session Stripe
-    if request.method == 'POST':
-        line_items = []
-        for item in cart.items.all():
-            line_items.append({
-                'price_data': {
-                    'currency': 'eur',
-                    'product_data': {
-                        'name': item.product.name,
-                    },
-                    'unit_amount': int(item.product.price * 100),  # Stripe attend des centimes
-                },
-                'quantity': item.quantity,
-            })
-        
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            success_url=request.build_absolute_uri('/orders/success/'),
-            cancel_url=request.build_absolute_uri('/orders/checkout/'),
-        )
-        return redirect(session.url, code=303)
-
-    cart_items = cart.items.all()
-    total_amount = cart.total_amount
-
-    return render(request, 'orders/checkout.html', {
-        'cart_items': cart_items,
-        'total_amount': total_amount,
-        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY
-    })
 
 @login_required
 def payment(request, order_id):
@@ -126,12 +126,16 @@ def payment(request, order_id):
 
 @login_required
 def payment_success(request):
-    # Vider le panier de l'utilisateur
-    cart = Cart.objects.filter(user=request.user).first()
-    if cart:
-        cart.items.all().delete()
-
-    return render(request, 'orders/payment_success.html')
+    # Récupérer la dernière commande depuis la session
+    last_order_id = request.session.get('last_order_id')
+    order = None
+    
+    if last_order_id:
+        order = Order.objects.filter(pk=last_order_id, customer=request.user).first()
+        # Nettoyer la session après récupération
+        del request.session['last_order_id']
+    
+    return render(request, 'orders/payment_success.html', {'order': order})
 
 def send_order_confirmation_email(user_email, order):
     subject = f"Confirmation de votre commande #{order.pk}"

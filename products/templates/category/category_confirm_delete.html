@@ -2,67 +2,137 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Supprimer la catégorie</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚠️ Supprimer la Catégorie</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
     body {
-        background-color: #f8f9fa;
         font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
     }
-    .delete-card {
-        max-width: 500px;
-        margin: 80px auto;
+
+    .confirm-container {
         background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 0 auto;
         text-align: center;
     }
-    h1 {
+
+    .warning-icon {
+        font-size: 5rem;
         color: #dc3545;
-        margin-bottom: 20px;
-    }
-    p {
-        font-size: 1.1rem;
         margin-bottom: 25px;
+        animation: pulse 2s infinite;
     }
-    .btn-delete {
-        background-color: #dc3545;
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .confirm-header h1 {
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .category-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 25px 0;
+        text-align: left;
+    }
+
+    .category-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .btn-danger-confirm {
+        background: #dc3545;
         color: white;
-        border-radius: 6px;
-        padding: 8px 20px;
-        font-weight: bold;
-        margin-right: 10px;
-        transition: 0.3s;
+        border: none;
+        padding: 14px 40px;
+        border-radius: 10px;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 10px;
     }
-    .btn-delete:hover {
-        background-color: #b52a37;
+
+    .btn-danger-confirm:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(220, 53, 69, 0.4);
     }
+
     .btn-cancel {
-        background-color: #6c757d;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border-radius: 6px;
-        padding: 8px 20px;
-        font-weight: bold;
+        padding: 14px 40px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
         text-decoration: none;
-        transition: 0.3s;
-    }
-    .btn-cancel:hover {
-        background-color: #5a6268;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
     }
 </style>
 </head>
 <body>
-<div class="delete-card">
-    <h1>Supprimer la catégorie</h1>
-    <p>Voulez-vous vraiment supprimer "<strong>{{ category.name }}</strong>" ?</p>
+    <div class="container">
+        <div class="confirm-container">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <div class="confirm-header">
+                <h1>Supprimer la Catégorie ?</h1>
+                <p class="text-muted">Cette action est irréversible</p>
+            </div>
 
-    <form method="post" style="display:inline-block;">
-        {% csrf_token %}
-        <button type="submit" class="btn-delete">Oui, supprimer</button>
-        <a href="{% url 'category_list' %}" class="btn-cancel">Annuler</a>
-    </form>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="category-info">
+                <div class="category-name">
+                    <i class="fas fa-folder"></i> {{ object.name }}
+                </div>
+                {% if object.description %}
+                <p class="text-muted mb-0">{{ object.description }}</p>
+                {% endif %}
+                {% if object.product_set.count > 0 %}
+                <div class="alert alert-warning mt-3 mb-0">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Attention:</strong> Cette catégorie contient {{ object.product_set.count }} produit(s).
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="text-danger mb-3">
+                <i class="fas fa-exclamation-circle"></i>
+                Êtes-vous sûr de vouloir supprimer cette catégorie ?
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger-confirm">
+                    <i class="fas fa-trash"></i> Oui, supprimer définitivement
+                </button>
+                <a href="{% url 'category_list' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Non, annuler
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

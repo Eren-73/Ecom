@@ -2,63 +2,191 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ vendor.business_name }} - Boutique</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
-    body { background: #f8f9fa; font-family: "Segoe UI", sans-serif; }
-    .product-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; margin-bottom: 20px; transition: transform 0.2s; }
-    .product-card:hover { transform: scale(1.03); }
-    .badge { margin-right: 5px; }
-    .promotion { background: #dc3545; }
-    .product-price { font-weight: bold; font-size: 1.1em; }
-    .btn-group { display: flex; gap: 5px; flex-direction: column; }
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+
+    .shop-banner {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .shop-logo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #667eea;
+    }
+
+    .shop-name {
+        color: #667eea;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .product-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .product-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        color: #667eea;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .btn-add-cart {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        width: 100%;
+    }
+
+    .search-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 12px;
+    }
 </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h1 class="text-center mb-2">{{ vendor.business_name }}</h1>
-    <p class="text-center text-muted">{{ vendor.description }}</p>
-
-    <!-- Formulaire de recherche -->
-    <form method="get" class="mb-4 text-center">
-        <input type="text" name="q" placeholder="Rechercher un produit..." value="{{ query|default:'' }}" class="form-control d-inline-block" style="width: 300px;">
-        <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
-    </form>
-
-    <div class="row">
-        {% for product in products %}
-        <div class="col-md-4">
-            <div class="product-card">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="img-fluid mb-2" alt="{{ product.name }}">
-                {% endif %}
-                <h5>{{ product.name }}</h5>
-                <p class="product-price">
-                    {% if product.promotion > 0 %}
-                        <span class="text-muted text-decoration-line-through">{{ product.price }} €</span>
-                        <span class="text-danger">{{ product.price|floatformat:2|floatformat:2|add:'-'|add:product.promotion }} €</span>
-                        <span class="badge promotion">-{{ product.promotion }}%</span>
+    <div class="container">
+        <div class="shop-banner">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    {% if vendor.image %}
+                        <img src="{{ vendor.image.url }}" alt="{{ vendor.business_name }}" class="shop-logo">
                     {% else %}
-                        {{ product.price }} €
+                        <div class="shop-logo mx-auto d-flex align-items-center justify-content-center" style="background: #f0f0f0;">
+                            <i class="fas fa-store fa-4x text-muted"></i>
+                        </div>
                     {% endif %}
-                </p>
-                <p>
-                    {% if product.category %}<span class="badge bg-info">{{ product.category.name }}</span>{% endif %}
-                    {% for tag in product.get_tags_list %}<span class="badge bg-secondary">{{ tag }}</span>{% endfor %}
-                </p>
-                <div class="btn-group">
-                    <a href="{{ product.get_absolute_url }}" class="btn btn-success">Voir le produit</a>
-                    {% if user.is_authenticated and user.customer_profile %}
-                        <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-primary">Ajouter au panier</a>
+                </div>
+                <div class="col-md-9">
+                    <h1 class="shop-name">{{ vendor.business_name }}</h1>
+                    {% if vendor.is_verified %}
+                        <span class="badge bg-success mb-2">
+                            <i class="fas fa-check-circle"></i> Vendeur vérifié
+                        </span>
                     {% endif %}
+                    <p class="text-muted mb-3">{{ vendor.description }}</p>
+                    <div class="d-flex gap-4">
+                        <span><i class="fas fa-map-marker-alt text-primary"></i> {{ vendor.city }}</span>
+                        <span><i class="fas fa-phone text-primary"></i> {{ vendor.phone }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <p class="text-center">Aucun produit trouvé.</p>
-        {% endfor %}
+
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{% url 'liste_boutiques' %}" class="btn" style="background: white; color: #667eea; font-weight: 600; border-radius: 10px; padding: 10px 20px;">
+                <i class="fas fa-arrow-left"></i> Retour aux boutiques
+            </a>
+            <a href="{% url 'home' %}" class="btn" style="background: white; color: #667eea; font-weight: 600; border-radius: 10px; padding: 10px 20px;">
+                <i class="fas fa-home"></i> Accueil
+            </a>
+        </div>
+
+        <div class="search-box">
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher un produit..." value="{{ query }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+            </form>
+        </div>
+
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 col-lg-3">
+                    <div class="product-card">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="product-img d-flex align-items-center justify-content-center" style="background: #f0f0f0;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <h5 class="product-name">{{ product.name|truncatewords:5 }}</h5>
+                        <div class="product-price">{{ product.price }} €</div>
+                        <div class="mb-2">
+                            {% if product.is_in_stock %}
+                                <span class="badge bg-success">En stock ({{ product.stock_quantity }})</span>
+                            {% else %}
+                                <span class="badge bg-danger">Rupture</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-eye"></i> Voir détails
+                        </a>
+                        {% if product.is_in_stock %}
+                            <a href="{% url 'add_to_cart' product.id %}" class="btn-add-cart">
+                                <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="product-card text-center py-5">
+                <i class="fas fa-box-open fa-5x text-muted mb-3"></i>
+                <h3>Aucun produit trouvé</h3>
+                <p class="text-muted">Cette boutique n'a pas encore de produits</p>
+            </div>
+        {% endif %}
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

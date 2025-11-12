@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('vendor/sales/csv/', views.vendor_sales_csv, name='vendor_sales_csv'),
     
+    path('boutiques/', views.liste_boutiques, name='liste_boutiques'),
     path('vendor/<int:vendor_id>/boutique/', views.boutique_vendeur, name='boutique_vendeur'),
 
 

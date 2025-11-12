@@ -1,0 +1,70 @@
+<!-- templates/orders/success.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement réussi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .success-container {
+            background: white;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #28a745;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 25px;
+            margin: 5px;
+            text-decoration: none;
+            color: white;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        a.home {
+            background-color: #007bff;
+        }
+        a.home:hover {
+            background-color: #0056b3;
+        }
+
+        a.orders {
+            background-color: #28a745;
+        }
+        a.orders:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <h1>Paiement effectué avec succès ✅</h1>
+        <p>Merci pour votre commande !</p>
+        <a href="{% url 'home' %}" class="home">Retour à l'accueil</a>
+        <a href="{% url 'order_list' %}" class="orders">Voir mes commandes</a>
+    </div>
+</body>
+</html>
