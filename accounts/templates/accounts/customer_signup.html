@@ -311,64 +311,50 @@
                     <div class="section-title">
                         <i class="fas fa-id-card"></i> Informations personnelles
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="id_first_name">
-                                <i class="fas fa-user-alt"></i> Prénom
-                            </label>
-                            {{ profile_form.first_name }}
-                            {% if profile_form.first_name.errors %}
-                                <ul class="errorlist">
-                                    {% for error in profile_form.first_name.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_last_name">
-                                <i class="fas fa-user-alt"></i> Nom
-                            </label>
-                            {{ profile_form.last_name }}
-                            {% if profile_form.last_name.errors %}
-                                <ul class="errorlist">
-                                    {% for error in profile_form.last_name.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
+                    
+                    <div class="form-group">
+                        <label for="id_phone">
+                            <i class="fas fa-phone"></i> {{ profile_form.phone.label }}
+                        </label>
+                        {{ profile_form.phone }}
+                        {% if profile_form.phone.errors %}
+                            <ul class="errorlist">
+                                {% for error in profile_form.phone.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <small class="helptext">Optionnel - pour vous contacter en cas de besoin</small>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="id_phone">
-                                <i class="fas fa-phone"></i> Téléphone
-                            </label>
-                            {{ profile_form.phone }}
-                            {% if profile_form.phone.errors %}
-                                <ul class="errorlist">
-                                    {% for error in profile_form.phone.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_city">
+                            <i class="fas fa-city"></i> {{ profile_form.city.label }}
+                        </label>
+                        {{ profile_form.city }}
+                        {% if profile_form.city.errors %}
+                            <ul class="errorlist">
+                                {% for error in profile_form.city.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <small class="helptext">Optionnel - votre ville</small>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="id_address">
-                                <i class="fas fa-map-marker-alt"></i> Adresse
-                            </label>
-                            {{ profile_form.address }}
-                            {% if profile_form.address.errors %}
-                                <ul class="errorlist">
-                                    {% for error in profile_form.address.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_address">
+                            <i class="fas fa-map-marker-alt"></i> {{ profile_form.address.label }}
+                        </label>
+                        {{ profile_form.address }}
+                        {% if profile_form.address.errors %}
+                            <ul class="errorlist">
+                                {% for error in profile_form.address.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <small class="helptext">Optionnel - utile pour la livraison</small>
                     </div>
                 </div>
 

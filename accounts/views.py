@@ -20,16 +20,19 @@ from django.db.models import Sum, Count
 def vendor_signup(request):
     if request.method == 'POST':
         user_form = VendorSignUpForm(request.POST)
-        profile_form = VendorProfileForm(request.POST)
+        profile_form = VendorProfileForm(request.POST, request.FILES)
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
-            user.set_password(user_form.cleaned_data['password'])
+            user.set_password(user_form.cleaned_data['password1'])
             user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
+            messages.success(request, f'Compte vendeur créé avec succès ! Bienvenue {user.username} 🎉')
             login(request, user)
             return redirect('dashboard_vendor')
+        else:
+            messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
     else:
         user_form = VendorSignUpForm()
         profile_form = VendorProfileForm()
@@ -42,13 +45,16 @@ def customer_signup(request):
         profile_form = CustomerProfileForm(request.POST)
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
-            user.set_password(user_form.cleaned_data['password'])
+            user.set_password(user_form.cleaned_data['password1'])
             user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
+            messages.success(request, f'Compte client créé avec succès ! Bienvenue {user.username} 🎉')
             login(request, user)
             return redirect('dashboard_customer')
+        else:
+            messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
     else:
         user_form = CustomerSignUpForm()
         profile_form = CustomerProfileForm()
@@ -155,8 +161,13 @@ def update_order_status(request, order_id):
 
 @login_required
 def dashboard_customer(request):
-    # Récupère toutes les commandes du client connecté
-    orders = Order.objects.filter(customer=request.user).order_by('-created_at')
+    # Récupère toutes les commandes du client connecté (limité aux 5 plus récentes)
+    orders = Order.objects.filter(customer=request.user).order_by('-created_at')[:5]
+    
+    # Statistiques pour le dashboard
+    all_orders = Order.objects.filter(customer=request.user)
+    pending_count = all_orders.filter(status='pending').count()
+    delivered_count = all_orders.filter(status='delivered').count()
 
     # Récupère le panier du client (optionnel)
     cart = None
@@ -167,7 +178,9 @@ def dashboard_customer(request):
 
     context = {
         'orders': orders,
-        'cart': cart
+        'cart': cart,
+        'pending_count': pending_count,
+        'delivered_count': delivered_count,
     }
     return render(request, 'accounts/dashboard_customer.html', context)
 
