@@ -1,0 +1,77 @@
+<!-- templates/orders/checkout.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement - Résumé de commande</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+        h1 { margin-bottom: 20px; }
+
+        .container { display: flex; gap: 40px; flex-wrap: wrap; }
+        .cart, .payment { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .total { font-weight: bold; font-size: 1.2em; }
+
+        button { padding: 10px 20px; background-color: #6772E5; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #5469d4; }
+
+        h2 { margin-top: 0; }
+
+        p { font-size: 0.85em; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>Résumé de votre commande</h1>
+
+    {% if cart_items %}
+    <div class="container">
+        <!-- Récapitulatif du panier -->
+        <div class="cart">
+            <h2>Votre panier</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Sous-total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.product.price }} €</td>
+                        <td>{{ item.subtotal }} €</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3" class="total">Total</td>
+                        <td class="total">{{ total_amount }} €</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paiement Stripe -->
+        <div class="payment">
+            <h2>Paiement sécurisé</h2>
+            <form action="{% url 'checkout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Payer {{ total_amount }} € avec Stripe</button>
+            </form>
+            <p>
+                Vous serez redirigé vers Stripe pour finaliser le paiement. Utilisez les cartes de test (ex : 4242 4242 4242 4242) pour un projet scolaire.
+            </p>
+        </div>
+    </div>
+    {% else %}
+        <p>Votre panier est vide. <a href="{% url 'home' %}">Retour à l'accueil</a></p>
+    {% endif %}
+</body>
+</html>
