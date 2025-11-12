@@ -56,12 +56,30 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-5. **Créer un superutilisateur (optionnel)**
+5. **Créer un superutilisateur (Admin)**
 ```bash
 python manage.py createsuperuser
 ```
+Suivez les instructions pour créer votre compte admin.
 
-6. **Créer les dossiers média (si nécessaire)**
+6. **Créer des comptes de test** (Recommandé pour tester l'application)
+
+**Créer un compte vendeur:**
+- Allez sur http://127.0.0.1:8000/accounts/signup/vendor/
+- Remplissez le formulaire (nom d'entreprise, description, etc.)
+- Connectez-vous et ajoutez des produits depuis le dashboard
+
+**Créer un compte client:**
+- Allez sur http://127.0.0.1:8000/accounts/signup/customer/
+- Remplissez le formulaire
+- Vous pouvez maintenant parcourir et commander
+
+**Ou créer des données via l'admin:**
+- Allez sur http://127.0.0.1:8000/admin/
+- Connectez-vous avec le superuser
+- Créez des catégories, produits, profils vendeurs, etc.
+
+7. **Créer les dossiers média (si nécessaire)**
 ```bash
 # Windows
 mkdir media\products media\vendors media\categories
@@ -70,12 +88,12 @@ mkdir media\products media\vendors media\categories
 mkdir -p media/products media/vendors media/categories
 ```
 
-7. **Lancer le serveur**
+8. **Lancer le serveur**
 ```bash
 python manage.py runserver
 ```
 
-8. **Accéder à l'application**
+9. **Accéder à l'application**
 - Frontend: http://127.0.0.1:8000/
 - Admin: http://127.0.0.1:8000/admin/
 
@@ -169,6 +187,28 @@ python manage.py collectstatic
 
 # Lancer les tests
 python manage.py test
+```
+
+## 🆘 Support & Dépannage
+
+### Problème: "No such table" ou "no such column"
+```bash
+python manage.py migrate
+```
+
+### Problème: "STATICFILES_DIRS does not exist"
+```bash
+# Windows
+mkdir static
+
+# Linux/Mac
+mkdir static
+```
+
+### Problème: Import errors
+Vérifiez que l'environnement virtuel est activé et les dépendances installées:
+```bash
+pip install -r requirements.txt
 ```
 
 ## 👨‍💻 Auteur
