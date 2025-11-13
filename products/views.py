@@ -44,11 +44,14 @@ def product_create(request):
             for f in request.FILES.getlist('additional_images'):
                 ProductImage.objects.create(product=product, image=f)
 
-            return redirect(product.get_absolute_url())
+            messages.success(request, f"Produit '{product.name}' créé avec succès ! ✅")
+            return redirect('dashboard_vendor')
+        else:
+            messages.error(request, "Erreur : veuillez corriger les champs ci-dessous.")
     else:
         form = ProductForm()
 
-    return render(request, 'products/product_form.html', {'form': form})
+    return render(request, 'products/product_form.html', {'form': form, 'title': 'Ajouter un produit'})
 
 @login_required
 def product_edit(request, pk):
