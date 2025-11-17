@@ -18,7 +18,8 @@
 Tests Totaux       : 30
 Tests Passants     : 30 ✅
 Taux de Succès    : 100%
-Durée Exécution   : ~32 secondes
+Durée Exécution   : ~28 secondes (27.994s)
+Warnings Système  : 0 ✅
 ```
 
 ---
@@ -121,13 +122,15 @@ tests/
 | 4 | `test_creation_produit_reussie` | Création produit ✅ |
 | 5 | `test_modification_produit_reussie` | Modification produit ✅ |
 
-### Orders Tests (3 tests)
+### Orders Tests (3 tests unitaires)
 
 | # | Test | Description |
 |---|------|-------------|
 | 1 | `test_ajout_produit_au_panier` | Ajout panier ✅ |
 | 2 | `test_affichage_panier_avec_articles` | Affichage panier ✅ |
 | 3 | `test_checkout_reussi` | Checkout ✅ |
+
+**Note** : Les tests d'intégration liés à Orders (`test_panier_avec_produits`, `test_commande_avec_produits`, `test_relation_client_panier`, `test_relation_client_commandes`) sont comptés dans la section "Integration Tests" ci-dessous.
 
 ### Workflows Tests (2 tests)
 
@@ -199,17 +202,21 @@ tests/
 
 ### Commande de Lancement
 ```bash
-python manage.py test tests
+python manage.py test tests -v 2
 ```
+
+**Note** : L'option `-v 2` permet d'afficher tous les tests avec leurs descriptions complètes.
 
 ### Résultat Final
 ```
-Creating test database for alias 'default'...
-System check identified 2 issues (0 silenced).
+Found 30 test(s).
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+...
+System check identified no issues (0 silenced).
 
-..............................
+[30 tests listés avec leurs descriptions complètes]
 ----------------------------------------------------------------------
-Ran 30 tests in 32.041s
+Ran 30 tests in 27.994s
 
 OK ✅
 Destroying test database for alias 'default'...
@@ -220,8 +227,9 @@ Destroying test database for alias 'default'...
 - **Tests réussis** : 30 ✅
 - **Tests échoués** : 0 ✅
 - **Erreurs** : 0 ✅
+- **Warnings système** : 0 ✅
 - **Taux de succès** : 100% ✅
-- **Durée** : ~32 secondes
+- **Durée** : ~28 secondes (27.994s)
 
 ---
 
@@ -240,7 +248,8 @@ Destroying test database for alias 'default'...
 2. **Maintenabilité** : Facile à lire et modifier
 3. **Extensibilité** : Facile d'ajouter de nouveaux tests
 4. **Robustesse** : Gestion d'erreurs appropriée
-5. **Performance** : Exécution rapide (~32s pour 30 tests)
+5. **Performance** : Exécution rapide (~28s pour 30 tests)
+6. **Qualité** : Aucun warning système détecté
 
 ---
 
@@ -327,10 +336,18 @@ python manage.py test tests.functional
 python manage.py test tests.integration
 ```
 
-### Exécuter avec Verbosité
+### Exécuter avec Verbosité Complète
 ```bash
 python manage.py test tests -v 2
 ```
+
+**⚠️ Important** : Utilisez `-v 2` pour voir **tous les 30 tests** avec leurs descriptions complètes.  
+Sans cette option, certains tests peuvent ne pas être affichés dans la sortie du terminal.
+
+**Scripts d'exécution rapide** :
+- Windows : `run_tests.bat`
+- Linux/Mac : `./run_tests.sh`
+- Python : `python run_tests.py`
 
 ### Générer Rapport de Couverture
 ```bash

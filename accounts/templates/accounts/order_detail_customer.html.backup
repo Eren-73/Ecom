@@ -1,4 +1,4 @@
-{% load custom_filters %}
+{% load accounts_filters %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>

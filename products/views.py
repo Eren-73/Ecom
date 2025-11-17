@@ -119,3 +119,16 @@ def category_delete(request, pk):
         messages.success(request, "Catégorie supprimée avec succès !")
         return redirect('category_list')
     return render(request, 'category/category_confirm_delete.html', {'category': category})
+    
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_detail', pk=product.pk)
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, 'products/product_update.html', {'form': form, 'product': product})
